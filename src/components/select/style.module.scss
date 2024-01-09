@@ -1,0 +1,51 @@
+.wrappper {
+  position: relative;
+}
+
+.select {
+  border-radius: 8px;
+  border: 1px solid #b2bcd3;
+  background: rgba(255, 255, 255, 0.8);
+  cursor: pointer;
+  padding: 12px;
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  &__label {
+    padding-right: 15px;
+  }
+  &__icon {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+.list {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  width: 100%;
+  background: #fff;
+  z-index: 9999;
+  border: 1px solid transparent;
+  box-sizing: border-box;
+  border-radius: 0px 0px 4px 4px;
+  transition: height 0.2s ease;
+  overflow: hidden;
+  height: 0;
+  &.open {
+    height: auto;
+    border-color: #b2bcd3;
+  }
+  &__item {
+    padding: 12px;
+    border-bottom: 1px solid #b2bcd3;
+    cursor: pointer;
+    transition: 0.2s;
+    font-weight: 500;
+    &:hover {
+      background-color: #b2bcd3;
+    }
+  }
+}

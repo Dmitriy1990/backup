@@ -1,0 +1,44 @@
+.wrap {
+  background: rgba(52, 60, 83, 0.6);
+  position: fixed;
+  height: 100%;
+  width: 100%;
+  bottom: 0;
+  left: 0;
+  top: 0;
+  right: 0;
+  z-index: 9999999;
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: flex;
+  &.notBg {
+    background: none;
+  }
+}
+
+.anim {
+  margin: auto;
+  width: 100%;
+  max-width: 311px;
+  position: relative;
+  max-height: 100%;
+  scrollbar-width: none;
+  @media (min-width: 1100px) {
+    max-width: 410px;
+  }
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  &.bottom {
+    bottom: 0;
+    margin-top: auto;
+    margin-bottom: 0;
+  }
+  &.list {
+    max-width: 500px;
+  }
+}
+.modal {
+  position: relative;
+  width: 100%;
+}

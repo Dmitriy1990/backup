@@ -1,0 +1,70 @@
+.wrapper {
+  position: relative;
+}
+
+.checkbox {
+  opacity: 0;
+  z-index: 1;
+  background: #707991;
+  border-radius: 20px;
+  width: 44px;
+  height: 24px;
+
+  &:checked + .label {
+    background-color: var(--blue);
+    // border: 1px solid rgba(244, 224, 238, 1);
+
+    &::after {
+      left: 22px;
+      box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.4);
+    }
+  }
+}
+
+.label {
+  position: absolute;
+  top: 4px;
+  left: 0;
+  border-radius: 15px;
+  width: 44px;
+  height: 24px;
+  cursor: pointer;
+  background: rgba(167, 167, 167, 1);
+  transition: 0.2s;
+  box-sizing: border-box;
+
+  &::after {
+    content: "";
+    display: block;
+    border-radius: 50%;
+    transition: left 0.2s;
+    height: 20px;
+    left: 2px;
+    width: 20px;
+    margin-top: 2px;
+    box-sizing: border-box;
+    background: #fff;
+    box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.4);
+    border-radius: 10px;
+    z-index: 4;
+    position: relative;
+  }
+
+  &.disabled {
+    background: rgba(167, 167, 167, 0.2);
+    border: 1px solid rgba(167, 167, 167, 0.2);
+
+    &::after {
+      background: rgba(167, 167, 167, 1);
+    }
+  }
+}
+
+.left {
+  position: absolute;
+  border-radius: 50%;
+  left: 10px;
+  top: 10px;
+  background: transparent;
+  z-index: 2;
+}

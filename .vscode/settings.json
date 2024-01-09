@@ -1,0 +1,37 @@
+{
+  "files.exclude": {
+    "**/*.sass.d.ts": true,
+    "**/node_modules": true,
+    "**/package-lock.json": true,
+    "**/*.meta": {
+      "when": "$(basename)"
+    },
+    "**/*.js": {
+      "when": "$(basename).ts"
+    },
+    "**/**/*.js": {
+      "when": "$(basename).tsx"
+    },
+    "**/.classpath": true,
+    "**/.project": true,
+    "**/.settings": true,
+    "**/.factorypath": true
+  },
+  "editor.tabSize": 2,
+  "editor.formatOnSave": true,
+  "editor.inlineSuggest.enabled": false,
+  "javascript.format.enable": true,
+  "javascript.format.semicolons": "insert",
+  "typescript.format.enable": true,
+  "typescript.format.semicolons": "insert",
+  "typescriptHero.imports.stringQuoteStyle": "\"",
+  "typescriptHero.imports.organizeSortsByFirstSpecifier": true,
+  "typescriptHero.imports.removeTrailingIndex": true,
+  "typescriptHero.imports.disableImportRemovalOnOrganize": true,
+  "typescriptHero.imports.organizeOnSave": true,
+  "typescript.updateImportsOnFileMove.enabled": "always",
+  "javascript.updateImportsOnFileMove.enabled": "always",
+  "html.format.extraLiners": "",
+  "html.format.indentInnerHtml": true,
+  "typescript.tsdk": "node_modules/typescript/lib",
+}
