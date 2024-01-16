@@ -9,10 +9,19 @@ registerLocale("el", el);
 
 type Props = {
   children?: ReactNode;
+  startDate: Date | null;
+  setStartDate: (v: Date | null) => void;
+  minDate?: string;
+  maxDate?: string;
 };
 
-export const Calendar: FC<Props> = ({ children }: Props) => {
-  const [startDate, setStartDate] = useState<Date | null>(new Date());
+export const Calendar: FC<Props> = ({
+  children,
+  startDate,
+  setStartDate,
+  minDate,
+  maxDate,
+}: Props) => {
   return (
     <div className="calendar">
       <DatePicker
@@ -20,6 +29,8 @@ export const Calendar: FC<Props> = ({ children }: Props) => {
         onChange={(date) => setStartDate(date)}
         inline
         locale="el"
+        minDate={minDate ? new Date(minDate) : null}
+        maxDate={maxDate ? new Date(maxDate) : null}
       />
       {children}
     </div>

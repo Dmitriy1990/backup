@@ -1,74 +1,209 @@
-import React, { FC, useState, useEffect } from "react";
+import React, { FC, useState, useEffect, useRef } from "react";
 import styles from "./style.module.scss";
 import clsx from "clsx";
-import {
-  IconLogo,
-  IconCalendar,
-  IconBack,
-  IconInfo,
-  IconFile,
-  IconMicro,
-} from "../../assets";
+import { IconLogo, IconCalendar, IconBack, IconInfo } from "../../assets";
 import { Avatar } from "components/avatar";
 import { UserMenu } from "components/userMenu";
 import { Scrollbars } from "rc-scrollbars";
 import { CalendarModal } from "./components/calendarModal";
 import useWindowSize from "hooks/useWindowSize";
-import { useSnapshot } from "valtio";
-import { selectAccountStore } from "store/selectAccount";
 import { ENDPOINTS, client } from "api";
-import { Accounts } from "types/accounts";
 import { DialogRoot } from "types/dialog";
 import moment from "moment";
-import { Message } from "types/message";
+import { Message, MessageCollection } from "types/message";
 import { Link, useParams } from "react-router-dom";
 import { routes } from "constantes/routes";
+import { ComponentFile, ImageFile } from "./components/mediaMessage";
+import InfiniteScroll from "react-infinite-scroller";
+import {
+  CustomScrollbars,
+  CustomScrollbarsVirtualList,
+} from "components/customScrollbars/CustomScrollbars";
+import { FixedSizeList as List } from "react-window";
+import InfiniteLoader from "react-window-infinite-loader";
+import AutoSizer from "react-virtualized-auto-sizer";
+import { Chat, LeftBar } from "components/chat";
 
 export const Detailed: FC = () => {
   const [openCalendar, setOpenCalendar] = useState(false);
   const size = useWindowSize();
-  const { account } = useSnapshot(selectAccountStore);
   const [dialogs, setDialogs] = useState<DialogRoot[]>([]);
+  const [dialog, setDialog] = useState<DialogRoot | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingMessages, setIsLoadingMessages] = useState(true);
+  const [startDate, setStartDate] = useState<Date | null>(null);
+  const [dialogPage, setDilogPage] = useState(0);
   const [messages, setMessages] = useState<Message[]>([]);
-  const { id } = useParams();
+  const [messagesCollection, setMessagesCollection] =
+    useState<MessageCollection | null>(null);
+  const [loadAvailable, setLoadAvailable] = useState(true);
+  const { id, userName } = useParams();
 
   useEffect(() => {
     if (id) {
-      // getDialogs(account?.id);
       getDialogs(+id);
     }
   }, [id]);
 
-  const getDialogs = async (accountId: number) => {
+  useEffect(() => {
+    if (dialog) {
+      getMessages(dialog.accountId, dialog.dialogId, dialog.dialogType);
+    }
+  }, [dialog]);
+
+  const getDialogs = async (
+    accountId: number,
+    startDate: Date | string | null = "",
+    page: number = 0
+  ) => {
+    setIsLoading(true);
     try {
       const res = await client.get(
-        `${ENDPOINTS.EXPORT.GET_DIALOGS}?accountId=${accountId}&page=0&size=20`
+        `${ENDPOINTS.EXPORT.GET_DIALOGS}?accountId=${accountId}&page=0&size=200`
       );
 
       if (res.status === 200) {
-        setDialogs(res.data.content);
         if (res.data.content[0]) {
-          getMessages(2200230478, 5000012909, "User");
+          setDialogs(res.data.content);
         }
-        getMessages(2200230478, 5000012909, "User");
+        // getMessages(6903303905, 286587557, "User");
       }
+      setIsLoading(false);
     } catch (e) {
       console.log(e);
+      setIsLoading(false);
     }
   };
 
   const getMessages = async (
     accountId: number,
     dialogId: number,
-    dialogType: string
+    dialogType: string,
+    startDate: Date | string | null = ""
   ) => {
+    setIsLoadingMessages(true);
+    setDilogPage(0);
     try {
       const res = await client.get(
-        `${ENDPOINTS.EXPORT.MESSAGES}?accountId=${accountId}&dialogId=${dialogId}&dialogType=${dialogType}&page=0&size=20`
+        `${
+          ENDPOINTS.EXPORT.MESSAGES
+        }?accountId=${accountId}&dialogId=${dialogId}&dialogType=${dialogType}&page=0&size=15&fromDate=${
+          startDate ? moment(startDate).startOf("day").toISOString() : ""
+        }`
       );
 
       if (res.status === 200) {
         setMessages(res.data.content);
+        let result: MessageCollection = {};
+        res.data.content
+          .sort(
+            (a: any, b: any) =>
+              new Date(a.messageDate).valueOf() -
+              new Date(b.messageDate).valueOf()
+          )
+          .forEach((item: Message) => {
+            const d = moment(item.messageDate).calendar(null, {
+              lastDay: `[Yesterday]`,
+              sameDay: `[Today]`,
+              lastWeek: "D MMMM",
+              nextWeek: "dddd",
+              sameElse: "MM.DD.YYYY",
+            });
+            if (result[d]) {
+              result[d].push(item);
+            } else {
+              result[d] = [item];
+            }
+          });
+        setMessagesCollection(result);
+        setLoadAvailable(true);
+      }
+      setIsLoadingMessages(false);
+    } catch (e) {
+      console.log(e);
+      setIsLoadingMessages(false);
+    }
+  };
+
+  const getMoreMessages = async () => {
+    if (!dialog) return;
+    setLoadAvailable(false);
+    try {
+      const res = await client.get(
+        `${ENDPOINTS.EXPORT.MESSAGES}?accountId=${dialog.accountId}&dialogId=${
+          dialog.dialogId
+        }&dialogType=${dialog.dialogType}&page=${
+          dialogPage + 1
+        }&size=15&fromDate=${
+          startDate ? moment(startDate).startOf("day").toISOString() : ""
+        }`
+        // `${
+        //   ENDPOINTS.EXPORT.MESSAGES
+        // }?accountId=6903303905&dialogId=286587557&dialogType=User&page=${
+        //   dialogPage + 1
+        // }&size=15&fromDate=${
+        //   startDate ? moment(startDate).startOf("day").toISOString() : ""
+        // }`
+      );
+      if (res.status === 200 && res.data.content.length) {
+        setDilogPage(dialogPage + 1);
+        setMessages([...messages, ...res.data.content]);
+        let result: any = messagesCollection ?? {};
+        res.data.content
+          .sort(
+            (a: any, b: any) =>
+              new Date(a.messageDate).valueOf() -
+              new Date(b.messageDate).valueOf()
+          )
+          .forEach((item: Message) => {
+            const d = moment(item.messageDate).calendar(null, {
+              lastDay: `[Yesterday]`,
+              sameDay: `[Today]`,
+              lastWeek: "D MMMM",
+              nextWeek: "dddd",
+              sameElse: "MM.DD.YYYY",
+            });
+            // const d = moment(item.messageDate).format();
+            if (result[d]) {
+              result[d].push(item);
+            } else {
+              result[d] = [item];
+            }
+          });
+        setMessagesCollection({ ...messagesCollection, ...result });
+        setLoadAvailable(true);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const setNewDate = (startDate: Date | null) => {
+    if (dialog) {
+      getMessages(
+        dialog?.accountId,
+        dialog.dialogId,
+        dialog.dialogType,
+        moment(startDate).startOf("day").toISOString()
+      );
+    }
+    setStartDate(startDate);
+  };
+
+  const getFile = async (id: number) => {
+    try {
+      const res = await client.get(`${ENDPOINTS.EXPORT.GET_MEDIA}?id=${id}`, {
+        responseType: "blob",
+      });
+      if (res.status == 200) {
+        const href = URL.createObjectURL(res.data);
+        const link = document.createElement("a");
+        link.href = href;
+        link.setAttribute("download", "");
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(href);
       }
     } catch (e) {
       console.log(e);
@@ -78,8 +213,14 @@ export const Detailed: FC = () => {
   return (
     <div className="page">
       <CalendarModal
+        startDate={startDate}
+        setStartDate={setNewDate}
         setOpenCalendar={setOpenCalendar}
         openCalendar={openCalendar}
+        minDate={dialog?.createDate}
+        maxDate={dialog?.lastUpdateDate}
+        // minDate={"2024-01-13T08:43:22.311408"}
+        // maxDate={"2024-01-14T10:00:03.330512"}
       />
       {/* Left Bar */}
 
@@ -93,7 +234,7 @@ export const Detailed: FC = () => {
               <Link to={routes.selectAccount} className={styles.header__left}>
                 <IconBack className={styles.back} />
                 <h4 className={clsx(styles.name, "bold")}>
-                  {account ? account.firstName : "-"}
+                  {userName ? userName : "-"}
                 </h4>
                 <IconInfo className={styles.back} />
               </Link>
@@ -102,224 +243,25 @@ export const Detailed: FC = () => {
           </div>
         </div>
         <div className={styles.main__inner}>
-          <div className={styles.leftBar}>
-            <Scrollbars
-              autoHeight
-              autoHeightMax={"90vh"}
-              autoHide
-              universal={true}
-            >
-              <div className={styles.account_list}>
-                {dialogs.map((item, id) => (
-                  <div className={styles.account__item} key={id}>
-                    <Avatar name={item?.name ? item.name : ""} />
-                    <div className={clsx(styles.account__detail, "ellipsis")}>
-                      <div className={styles.account__header}>
-                        <h4 className={clsx(styles.account__name, "ellipsis")}>
-                          {item?.name ? item.name : "-"}
-                        </h4>
-                        <span>
-                          {item?.lastDate
-                            ? moment
-                                .utc(new Date(item.lastDate))
-                                .local()
-                                .format("HH:mm")
-                            : "-:-"}
-                        </span>
-                      </div>
+          <LeftBar
+            dialog={dialog}
+            dialogs={dialogs}
+            userName={userName || ""}
+            setDialog={setDialog}
+            setStartDate={setStartDate}
+            mobHeader={true}
+          />
 
-                      <p
-                        className={clsx(styles.account__text, "ellipsis grey")}
-                      >
-                        Не подскажу Не подскажу Не подскажу Не подскажуНе
-                        подскажу
-                      </p>
-                    </div>
-                  </div>
-                ))}
-                {/* <div className={styles.account__item}>
-                  <Avatar />
-                  <div className={clsx(styles.account__detail, "ellipsis")}>
-                    <div className={styles.account__header}>
-                      <h4 className={clsx(styles.account__name, "ellipsis")}>
-                        Артур П.Артур П.Артур П.Артур П.Артур П.Артур П.Артур
-                        П.Артур П.
-                      </h4>
-                      <span>19:48</span>
-                    </div>
-
-                    <p className={clsx(styles.account__text, "ellipsis grey")}>
-                      Не подскажу Не подскажу Не подскажу Не подскажуНе подскажу
-                    </p>
-                  </div>
-                </div> */}
-              </div>
-            </Scrollbars>
-          </div>
-          <div className={styles.chat}>
-            <div className={styles.chat_header}>
-              <div className={styles.chat_header__left}>
-                <IconBack className={styles.back} />
-                <div>
-                  <div className={clsx(styles.chat_header__title, "bold")}>
-                    Mini Boss
-                  </div>
-                  <p className="grey">Backup created 5 minutes ago</p>
-                </div>
-              </div>
-              <div
-                className={styles.chat_header__icon}
-                onClick={() => setOpenCalendar(true)}
-              >
-                <IconCalendar />
-              </div>
-            </div>
-
-            <div className={styles.messages}>
-              <Scrollbars
-                autoHeight
-                autoHeightMax={size < 900 ? "85vh" : "76vh"}
-                autoHide
-                universal={true}
-              >
-                <div className={styles.messages__dateTitle}>Today</div>
-
-                {messages.map((item) => (
-                  <div
-                    className={clsx(styles.account__item, styles.start)}
-                    key={item.id}
-                  >
-                    <Avatar name={item?.from ? item.from : ""} />
-                    <div className={styles.account__detail}>
-                      <div className={styles.account__header}>
-                        <h4 className={clsx(styles.account__name, "bold")}>
-                          {item?.from ? item.from : "-"}
-                        </h4>
-                        <span>
-                          {item?.messageDate
-                            ? moment
-                                .utc(new Date(item.messageDate))
-                                .local()
-                                .format("HH:mm")
-                            : "-:-"}
-                        </span>
-                      </div>
-
-                      <p className={styles.account__text}>
-                        {item?.text ? item.text : null}
-                      </p>
-                      {item.downloadable && (
-                        <div
-                          className={clsx(styles.account__item, styles.file)}
-                        >
-                          <div className={clsx(styles.file__ava, styles.red)}>
-                            <IconFile />
-                          </div>
-                          <div className={styles.account__detail}>
-                            <div className={styles.account__header}>
-                              <h4
-                                className={clsx(styles.account__name, "bold")}
-                              >
-                                Парапам пам пам.dpf
-                              </h4>
-                            </div>
-                            <p
-                              className={clsx(
-                                styles.account__text,
-                                "ellipsis grey"
-                              )}
-                            >
-                              1.5 MB
-                            </p>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                ))}
-
-                <div className={clsx(styles.account__item, styles.start)}>
-                  <Avatar />
-                  <div className={styles.account__detail}>
-                    <div className={styles.account__header}>
-                      <h4 className={clsx(styles.account__name, "bold")}>
-                        Артур П.
-                      </h4>
-                      <span>18:12</span>
-                    </div>
-
-                    <p className={styles.account__text}>Привет, что именно ?</p>
-                    <div className={clsx(styles.account__item, styles.file)}>
-                      <div className={clsx(styles.file__ava, styles.blue)}>
-                        <IconMicro />
-                      </div>
-                      <div className={styles.account__detail}>
-                        <div className={styles.account__header}>
-                          <h4 className={clsx(styles.account__name, "bold")}>
-                            Voice message
-                          </h4>
-                        </div>
-                        <p
-                          className={clsx(
-                            styles.account__text,
-                            "ellipsis grey"
-                          )}
-                        >
-                          00:48
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                {Array(100)
-                  .fill(2)
-                  .map((i, id) => (
-                    <div
-                      className={clsx(styles.account__item, styles.start)}
-                      key={id}
-                    >
-                      <Avatar />
-                      <div className={styles.account__detail}>
-                        <div className={styles.account__header}>
-                          <h4 className={clsx(styles.account__name, "bold")}>
-                            Артур П.
-                          </h4>
-                          <span>18:12</span>
-                        </div>
-
-                        <p className={styles.account__text}>
-                          Привет, что именно ?
-                        </p>
-                        <div
-                          className={clsx(styles.account__item, styles.file)}
-                        >
-                          <div className={clsx(styles.file__ava, styles.blue)}>
-                            <IconMicro />
-                          </div>
-                          <div className={styles.account__detail}>
-                            <div className={styles.account__header}>
-                              <h4
-                                className={clsx(styles.account__name, "bold")}
-                              >
-                                Voice message
-                              </h4>
-                            </div>
-                            <p
-                              className={clsx(
-                                styles.account__text,
-                                "ellipsis grey"
-                              )}
-                            >
-                              00:48
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-              </Scrollbars>
-            </div>
-          </div>
+          <Chat
+            isLoadingMessages={isLoadingMessages}
+            messagesCollection={messagesCollection}
+            getMoreMessages={getMoreMessages}
+            loadAvailable={loadAvailable}
+            getFile={getFile}
+            dialog={dialog}
+            setDialog={setDialog}
+            setOpenCalendar={setOpenCalendar}
+          />
         </div>
       </div>
     </div>

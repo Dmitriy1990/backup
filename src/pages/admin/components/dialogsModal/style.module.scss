@@ -1,0 +1,53 @@
+.modal {
+  margin-top: 78px;
+}
+
+.header {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  @media (max-width: 600px) {
+    justify-content: flex-start;
+    align-items: center;
+    &__title {
+      font-size: 24px;
+      font-style: normal;
+      font-weight: 900;
+      line-height: 30px;
+      letter-spacing: -0.48px;
+    }
+  }
+  &__icon {
+    cursor: pointer;
+    @media (max-width: 600px) {
+      display: none;
+    }
+  }
+  &__back {
+    display: none;
+    margin-right: 10px;
+    @media (max-width: 600px) {
+      display: inline-block;
+    }
+  }
+}
+
+.form {
+  margin-bottom: 16px;
+}
+
+.content {
+  align-items: flex-start !important;
+}
+
+.result {
+  margin-bottom: 16px;
+}
+
+.checkbox {
+  margin-bottom: 8px;
+  &__label {
+    margin-left: 10px;
+  }
+}

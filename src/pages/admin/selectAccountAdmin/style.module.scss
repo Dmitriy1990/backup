@@ -1,0 +1,93 @@
+.header {
+  border-bottom: 2px solid #fff;
+  background: rgba(245, 248, 255, 0.9);
+  backdrop-filter: blur(50px);
+  padding: 15px 0;
+  margin-bottom: 24px;
+  @media (max-width: 600px) {
+    padding: 24px 0;
+  }
+  &__inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+}
+
+.title {
+  color: #2f3c4e;
+  text-align: center;
+  font-weight: 500;
+  letter-spacing: -0.28px;
+  margin-bottom: 20px;
+  @media (max-width: 600px) {
+    margin-bottom: 18px;
+  }
+}
+
+.main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  flex-direction: column;
+  &__inner {
+  }
+  @media (max-width: 600px) {
+    justify-content: flex-start;
+    padding: 0 20px;
+  }
+}
+
+.box {
+  display: flex;
+  width: 250px;
+  padding: 24px 0px;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  border-radius: 16px;
+  border: 1px solid #fff;
+  background: #fff;
+  box-shadow: 0px 30px 60px 0px rgba(217, 225, 243, 0.4);
+  @media (max-width: 600px) {
+    width: 100%;
+    padding: 16px;
+  }
+  &__name {
+    color: var(--dark);
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 20px;
+    margin-bottom: 15px;
+
+    @media (max-width: 600px) {
+      margin: 8px 0;
+    }
+  }
+  &__phone {
+    line-height: 18px;
+    margin-bottom: 6px;
+  }
+  &__mail {
+    color: var(--grey);
+  }
+  &_info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    @media (max-width: 600px) {
+      // align-items: flex-start;
+    }
+  }
+}
+
+.accounts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: stretch;
+  @media (max-width: 600px) {
+    gap: 8px;
+  }
+}

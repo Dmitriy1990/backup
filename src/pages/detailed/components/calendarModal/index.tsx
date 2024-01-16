@@ -8,9 +8,20 @@ import { useSnapshot } from "valtio";
 type Props = {
   setOpenCalendar: (v: boolean) => void;
   openCalendar: boolean;
+  startDate: Date | null;
+  setStartDate: (v: Date | null) => void;
+  minDate?: string;
+  maxDate?: string;
 };
 
-export const CalendarModal: FC<Props> = ({ setOpenCalendar, openCalendar }) => {
+export const CalendarModal: FC<Props> = ({
+  setOpenCalendar,
+  openCalendar,
+  startDate,
+  setStartDate,
+  minDate,
+  maxDate,
+}) => {
   const onClose = () => setOpenCalendar(false);
   // const snap = useSnapshot(selectAccountStore);
 
@@ -28,7 +39,12 @@ export const CalendarModal: FC<Props> = ({ setOpenCalendar, openCalendar }) => {
           </div>
         </div>
         <div className={styles.calendar__inner}>
-          <Calendar>
+          <Calendar
+            startDate={startDate}
+            setStartDate={setStartDate}
+            minDate={minDate}
+            maxDate={maxDate}
+          >
             <div className={styles.calendar__close} onClick={onClose}>
               Close
             </div>

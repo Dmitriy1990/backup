@@ -87,6 +87,9 @@
     &:hover {
       border-radius: 20px;
     }
+    &--disabled {
+      color: #ccc;
+    }
   }
   .react-datepicker__day--outside-month {
     color: #9ca5bc;

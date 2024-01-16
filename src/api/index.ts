@@ -23,7 +23,7 @@ export const ENDPOINTS = {
     CREATE_SESSION: '/api/registration/create-session',
     CREATE_ACCOUNT: '/api/registration/create-account',
     CHECK_SESSION: '/api/registration/check-session',
-    AUTH: '/api/registration/auth'
+    AUTH: '/api/registration/auth_process'
   },
   MANUAL_WORK:{
     SYNC_MESSAGES: '/api/manual-work/sync-messages',

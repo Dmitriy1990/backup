@@ -19,3 +19,4 @@ export { ReactComponent as IconEdit } from "./icons/edit.svg";
 export { ReactComponent as IconFilter } from "./icons/filter.svg";
 export { ReactComponent as IconSee } from "./icons/see.svg";
 export { ReactComponent as IconArrowDown } from "./icons/arrow-down.svg";
+export { ReactComponent as IconDownload } from "./icons/download.svg";

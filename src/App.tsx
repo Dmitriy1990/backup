@@ -18,6 +18,8 @@ import { AdminAddUser } from "pages/admin/addUser";
 import { AdminAddAccounts } from "pages/admin/addAccount";
 import { AdminAddJobs } from "pages/admin/addJobs";
 import { AuthProvider } from "context/auth";
+import { AccountPreview } from "pages/admin/preview";
+import { SelectAccountAdmin } from "pages/admin/selectAccountAdmin";
 
 function App() {
   return (
@@ -61,12 +63,46 @@ function App() {
               </PrivateRoute>
             }
           />
+          <Route
+            path={routes.detailed + "/:id/:userName"}
+            element={
+              <PrivateRoute>
+                <Detailed />
+              </PrivateRoute>
+            }
+          />
 
           <Route
             path={routes.adminAccounts}
             element={
               <PrivateRoute>
                 <AdminAccounts />
+              </PrivateRoute>
+            }
+          />
+
+          <Route
+            path={routes.adminAccounts + "/:id/:userName"}
+            element={
+              <PrivateRoute>
+                <AccountPreview />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path={routes.adminAccounts + "/:id"}
+            element={
+              <PrivateRoute>
+                <AccountPreview />
+              </PrivateRoute>
+            }
+          />
+
+          <Route
+            path={routes.adminSelectAccount + "/:user"}
+            element={
+              <PrivateRoute>
+                <SelectAccountAdmin />
               </PrivateRoute>
             }
           />

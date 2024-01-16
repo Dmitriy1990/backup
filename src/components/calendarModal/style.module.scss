@@ -1,0 +1,51 @@
+.back {
+  display: flex;
+  align-items: center;
+  &__icon {
+    margin-right: 10px;
+    cursor: pointer;
+    @media (max-width: 900px) {
+      display: block;
+    }
+  }
+  &__title {
+    color: var(--dark);
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 20px;
+  }
+}
+
+.calendar {
+  &_modal {
+    @media (max-width: 900px) {
+      max-width: 100% !important;
+      height: 100vh;
+      background-color: #fff;
+    }
+  }
+  &__inner {
+    margin-top: 16px;
+    display: flex;
+    justify-content: center;
+  }
+  &__header {
+    padding: 24px 16px;
+    background-color: rgba(245, 248, 255, 0.9);
+    display: none;
+    @media (max-width: 900px) {
+      display: block;
+    }
+  }
+  &__close {
+    color: #1ca9ff;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 24px;
+    text-align: right;
+    cursor: pointer;
+    @media (max-width: 900px) {
+      display: none;
+    }
+  }
+}

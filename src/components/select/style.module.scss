@@ -18,6 +18,10 @@
     width: 24px;
     height: 24px;
   }
+  &.error {
+    color: red;
+    border-color: red;
+  }
 }
 
 .list {
@@ -28,7 +32,7 @@
   width: 100%;
   background: #fff;
   z-index: 9999;
-  border: 1px solid transparent;
+
   box-sizing: border-box;
   border-radius: 0px 0px 4px 4px;
   transition: height 0.2s ease;
@@ -36,7 +40,7 @@
   height: 0;
   &.open {
     height: auto;
-    border-color: #b2bcd3;
+    border: 1px solid #b2bcd3;
   }
   &__item {
     padding: 12px;

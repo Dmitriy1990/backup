@@ -43,12 +43,18 @@ export const Auth = () => {
         </div>
         <h3 className={styles.title}>Authorization</h3>
         <form onSubmit={onSubmit} className={styles.form}>
-          <input className={styles.field} type="text" placeholder="User Name" />
+          <input
+            className={styles.field}
+            type="text"
+            placeholder="User Name"
+            autoComplete="new-password"
+          />
           <div className={styles["field-wrap"]}>
             <input
               className={styles.field}
               type={isShowPass ? "text" : "password"}
               placeholder="Password"
+              autoComplete="new-password"
             />
             <span
               className={styles.field__icon}

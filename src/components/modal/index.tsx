@@ -4,6 +4,7 @@ import { animated, useTransition } from "react-spring";
 
 import { Portal } from "../portal";
 import styled from "./style.module.scss";
+import useWindowSize from "hooks/useWindowSize";
 
 type Props = {
   open: boolean;
@@ -28,7 +29,8 @@ export const Modal: FC<Props> = ({
   right,
   notBg,
 }: Props) => {
-  const pos = right ? "X" : "Y";
+  const size = useWindowSize();
+  const pos = size < 900 ? "X" : "Y";
 
   const pc = {
     from: { opacity: 0, transform: `translate${pos}(-100%)` },

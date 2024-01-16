@@ -9,6 +9,10 @@ import { AuthContext } from "context/auth";
 export const AdminHeader: FC = () => {
   const [openMenu, setOpenMenu] = useState(false);
   const { logout } = useContext(AuthContext);
+  const authStorage = localStorage.getItem("auth");
+
+  const isAuth = authStorage ? JSON.parse(authStorage) : null;
+  const userName = isAuth?.lusername || null;
 
   return (
     <div className={styles.header_wrapper}>
@@ -66,7 +70,7 @@ export const AdminHeader: FC = () => {
           </div>
           <div className={styles.rightBar}>
             <div className={clsx("bold ellipsis", styles.rightBar__name)}>
-              d.sokolovskiy
+              {userName}
             </div>
             <IconLogout className={styles.rightBar__logout} onClick={logout} />
             <div
