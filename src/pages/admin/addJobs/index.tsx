@@ -18,7 +18,7 @@ import { Button } from "components/button";
 import { ResultModal } from "../components/readingModal";
 import { AccountsModal } from "../components/accountsModal";
 import { Switch } from "components/switch";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ENDPOINTS, client } from "api";
 import { Accounts, RootAccounts } from "types/accounts";
 import { useSnapshot } from "valtio";
@@ -39,6 +39,7 @@ export const AdminAddJobs = () => {
   const [error, setError] = useState<"role" | "period" | "account" | null>(
     null
   );
+  const navigate = useNavigate();
 
   const createJobs = async () => {
     const dialog = dialogs.find((d) => d.checked);
@@ -71,10 +72,13 @@ export const AdminAddJobs = () => {
         deleteLag: "P30D",
       });
       if (res.status == 200) {
-        setModalResult(true);
+        navigate(routes.adminJobs);
       }
     } catch (e) {
       console.log(e);
+      setError("role");
+      setError("period");
+      setError("account");
     }
   };
 
