@@ -42,7 +42,7 @@ export const SelectAccountAdmin: FC<Props> = () => {
 
   const onSelectAccount = (account: Accounts) => {
     selectAccountStore.account = account;
-    naigate(`${routes.adminAccounts}/${account.id}/${account.firstName}`);
+    naigate(`${routes.detailed}/${account.id}/${account.firstName}`);
   };
 
   return (
