@@ -155,7 +155,7 @@ export const AdminAccounts = () => {
                       className={styles.icon__btn}
                       onClick={() =>
                         navigate(
-                          `${routes.adminAccounts}/${item.id}/${item.firstName}`
+                          `${routes.detailed}/${item.id}/${item.firstName}`
                         )
                       }
                     />

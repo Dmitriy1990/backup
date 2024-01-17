@@ -81,11 +81,11 @@ function App() {
             }
           />
 
-          <Route
+          {/* <Route
             path={routes.adminAccounts + "/:id/:userName"}
             element={
               <PrivateRoute>
-                <AccountPreview />
+                <Detailed />
               </PrivateRoute>
             }
           />
@@ -93,10 +93,10 @@ function App() {
             path={routes.adminAccounts + "/:id"}
             element={
               <PrivateRoute>
-                <AccountPreview />
+                <Detailed />
               </PrivateRoute>
             }
-          />
+          /> */}
 
           <Route
             path={routes.adminSelectAccount + "/:user"}

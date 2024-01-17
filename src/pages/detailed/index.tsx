@@ -5,15 +5,16 @@ import { IconLogo, IconCalendar, IconBack, IconInfo } from "../../assets";
 import { Avatar } from "components/avatar";
 import { UserMenu } from "components/userMenu";
 import { Scrollbars } from "rc-scrollbars";
-import { CalendarModal } from "./components/calendarModal";
+import { CalendarModal } from "components/calendarModal";
 import useWindowSize from "hooks/useWindowSize";
 import { ENDPOINTS, client } from "api";
 import { DialogRoot } from "types/dialog";
 import moment from "moment";
 import { Message, MessageCollection } from "types/message";
-import { Link, useParams } from "react-router-dom";
+import { Link, useLocation, useParams } from "react-router-dom";
 import { routes } from "constantes/routes";
-import { ComponentFile, ImageFile } from "./components/mediaMessage";
+import { AdminHeader } from "components/adminHeader";
+
 import InfiniteScroll from "react-infinite-scroller";
 import {
   CustomScrollbars,
@@ -38,6 +39,7 @@ export const Detailed: FC = () => {
     useState<MessageCollection | null>(null);
   const [loadAvailable, setLoadAvailable] = useState(true);
   const { id, userName } = useParams();
+  const location = useLocation();
 
   useEffect(() => {
     if (id) {
@@ -225,23 +227,27 @@ export const Detailed: FC = () => {
       {/* Left Bar */}
 
       <div className={styles.main}>
-        <div className={styles.header_wrapper}>
-          <div className={styles.header}>
-            <div className={styles.leftBar_header}>
-              <IconLogo />
-            </div>
-            <div className={styles.header__inner}>
-              <Link to={routes.selectAccount} className={styles.header__left}>
-                <IconBack className={styles.back} />
-                <h4 className={clsx(styles.name, "bold")}>
-                  {userName ? userName : "-"}
-                </h4>
-                <IconInfo className={styles.back} />
-              </Link>
-              <UserMenu />
+        {location.pathname.includes(routes.adminAccounts) ? (
+          <AdminHeader />
+        ) : (
+          <div className={styles.header_wrapper}>
+            <div className={styles.header}>
+              <div className={styles.leftBar_header}>
+                <IconLogo />
+              </div>
+              <div className={styles.header__inner}>
+                <Link to={routes.selectAccount} className={styles.header__left}>
+                  <IconBack className={styles.back} />
+                  <h4 className={clsx(styles.name, "bold")}>
+                    {userName ? userName : "-"}
+                  </h4>
+                  <IconInfo className={styles.back} />
+                </Link>
+                <UserMenu />
+              </div>
             </div>
           </div>
-        </div>
+        )}
         <div className={styles.main__inner}>
           <LeftBar
             dialog={dialog}
