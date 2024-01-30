@@ -1,0 +1,61 @@
+upstream backend {
+#    server host.docker.internal:8080;
+${BACKEND_UPSTREAM_SECTION}
+}
+
+server {
+    listen       80;
+    listen       8000;
+    listen       443 ssl;
+    server_name  localhost;
+    client_max_body_size ${CLIENT_MAX_BODY_SIZE};
+    client_body_buffer_size ${CLIENT_BODY_BUFFER_SIZE};
+
+    ssl_certificate conf.d/key/nginx-telegram-cleaner.crt;
+    ssl_certificate_key conf.d/key/nginx-telegram-cleaner.key;
+    ssl_dhparam conf.d/key/dhparam.pem;
+    ssl_ciphers EECDH+AESGCM:EDH+AESGCM;
+    ssl_ecdh_curve secp384r1;
+    ssl_session_timeout  10m;
+    ssl_session_cache shared:SSL:10m;
+    ssl_session_tickets off;
+    ssl_stapling on;
+    ssl_stapling_verify on;
+    resolver_timeout 5s;
+    add_header X-Frame-Options DENY;
+    add_header X-Content-Type-Options nosniff;
+    add_header X-XSS-Protection "1; mode=block";
+
+    keepalive_timeout   	70;
+
+    root /usr/share/nginx/html;
+
+    location /api/ {
+        proxy_pass     http://backend/api/;
+        proxy_redirect off;
+
+        proxy_set_header   Host             ${ESC}host;
+        proxy_set_header   X-Real-IP        ${ESC}remote_addr;
+        proxy_set_header   X-Forwarded-For  ${ESC}proxy_add_x_forwarded_for;
+
+        client_max_body_size       ${CLIENT_MAX_BODY_SIZE};
+        client_body_buffer_size    ${CLIENT_BODY_BUFFER_SIZE};
+
+        proxy_connect_timeout      ${PROXY_CONNECT_TIMEOUT};
+        proxy_send_timeout         ${PROXY_SEND_TIMEOUT};
+        proxy_read_timeout         ${PROXY_READ_TIMEOUT};
+        send_timeout               ${SEND_TIMEOUT};
+
+    }
+
+    error_page   500 502 503 504  /50x.html;
+        location /50x.html {
+            root   /usr/share/nginx/html;
+        }
+
+    location / {
+        alias /usr/share/nginx/html/build-front/;
+        try_files ${ESC}uri${ESC}args ${ESC}uri${ESC}args/ $uri/ /build-front/index.html;
+    }
+
+}
