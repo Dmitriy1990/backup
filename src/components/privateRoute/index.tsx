@@ -3,7 +3,7 @@ import React, { FC, ReactNode } from "react";
 import { Navigate, Route } from "react-router-dom";
 
 type Props = {
-  children: ReactNode;
+  children: any;
 };
 
 export const PrivateRoute: FC<Props> = ({ children }) => {

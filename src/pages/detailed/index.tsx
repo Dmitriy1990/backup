@@ -16,10 +16,6 @@ import { routes } from "constantes/routes";
 import { AdminHeader } from "components/adminHeader";
 
 import InfiniteScroll from "react-infinite-scroller";
-import {
-  CustomScrollbars,
-  CustomScrollbarsVirtualList,
-} from "components/customScrollbars/CustomScrollbars";
 import { FixedSizeList as List } from "react-window";
 import InfiniteLoader from "react-window-infinite-loader";
 import AutoSizer from "react-virtualized-auto-sizer";
