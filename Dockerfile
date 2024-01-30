@@ -1,8 +1,6 @@
 FROM node:21 as build
 
-RUN  apt update && \
-     apt update && \
-     mkdir -p /build_npm
+RUN mkdir -p /build_npm
 
 WORKDIR /build_npm
 
