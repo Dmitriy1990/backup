@@ -30,7 +30,9 @@
     "ts-check": "tsc",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "test": "jest"
+    "test": "jest",
+    "clean": "rm -rfv ./nginx/docker/build",
+    "clean-all": "rm -rfv ./node_modules && rm -rfv ./nginx/docker/build"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.1.2",

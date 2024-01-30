@@ -9,10 +9,18 @@ export default defineConfig({
   server: {
     host: "0.0.0.0",
     port: 3000,
-    open: true
+    open: true,
+    proxy: {
+      '/api': {
+        target: 'https://88.119.179.203:8443',
+        changeOrigin: true,
+        secure: false,
+        ws: true,
+      }
+    }
   },
   build: {
-    outDir: "./build",
+    outDir: "./nginx/docker/build",
   },
   plugins: [react(), paths(), svgr()],
 });

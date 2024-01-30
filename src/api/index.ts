@@ -5,7 +5,6 @@ const authStorage = localStorage.getItem('auth')
 const isAuth = authStorage ? JSON.parse(authStorage) : null
 
 export const client = axios.create({
-  baseURL: "https://88.119.179.203:8443",
   timeout: 60000,
   withCredentials: false,
   auth: {
