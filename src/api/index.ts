@@ -1,21 +1,31 @@
 import axios from 'axios';
 
-const authStorage = localStorage.getItem('auth') 
-
-const isAuth = authStorage ? JSON.parse(authStorage) : null
-
 export const client = axios.create({
   timeout: 60000,
   withCredentials: false,
-  auth: {
-    username: isAuth?.lusername ?  isAuth.lusername : '',
-    password: isAuth?.lpassword ?  isAuth.lpassword : '',
-  },
   headers:{
       "Access-Control-Allow-Origin": "*",
       // Authorization: "Basic dGdfYWRtaW46MTIz",
   }
 })
+
+client.interceptors.request.use (
+    function (config) {
+      const authStorage = localStorage.getItem('auth')
+      const isAuth = authStorage ? JSON.parse(authStorage) : null
+
+      if (isAuth) {
+        const username = isAuth?.lusername ?  isAuth.lusername : ''
+        const password = isAuth?.lpassword ?  isAuth.lpassword : ''
+        const token = btoa(`${username}:${password}`)
+        config.headers.Authorization = `Basic ${token}`;
+      }
+      return config;
+    },
+    function (error) {
+      return Promise.reject (error);
+    }
+);
 
 export const ENDPOINTS = {
   REGISTRATION:{
